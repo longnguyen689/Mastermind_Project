@@ -4,29 +4,29 @@ import java.io.*;
 import java.lang.Enum;
 import java.util.Random;
 import java.util.Scanner;
+
 enum Color
 {
-RED, BLUE, GREEN, YELLOW, ORANGE, PURPLE; //declare color constants
+    RED, BLUE, GREEN, YELLOW, ORANGE, PURPLE; //declare color constants
 
-public void DisplayAllColors()
-{ //assign colors to an array and print
-Color[] arr = Color.values();
-for(Color col : arr){
-//System.out.print(col + " ");
-System.out.printf("%s ", col);
-}
-System.out.println();
+    public void DisplayAllColors()
+    { //assign colors to an array and print
+        Color[] arr = Color.values();
+        for(Color col : arr){
+            //System.out.print(col + " ");
+            System.out.printf("%s ", col); 
+        }
+        System.out.println();
+    }
+
+    public static Color getRandomColor()
+    {
+        Random random = new Random(); //create an instance of Random class
+        return values()[random.nextInt(values().length)]; //then invoke nextInt() using that instance
+        //values() is of enum. returning any value in values()
+    }
 }
 
-public static Color getRandomColor()
-{
-Random random = new Random(); //create an instance of Random class
-return values()[random.nextInt(values().length)]; //then invoke nextInt() using that instance
-//values() is of enum. returning any value in values()
-}
-
-
-}
 enum Result
 {
 BLACK, WHITE, NONE;
@@ -48,7 +48,7 @@ public class MasterMind
         }
     }
     
-    public static void Trials(Color[] arr)
+    public static void Trials()
     {
         Scanner scan =  new Scanner(System.in);
         System.out.print("Enter 4 colors: ");
@@ -58,64 +58,61 @@ public class MasterMind
             trialColor[i] = scan.nextLine();
             
         }
-        
-        
     }
     
     public static final int NUM_COLOR = 4;
     
     public static void CheckResult(Color[] hidden, Color[] input)
     {
-        
-        int black = 0, white = 0, i = 0, j = 0;
-        Result[] result = new Result[NUM_COLOR];
         String[] inputCopy = new String[NUM_COLOR];
         String[] hiddenCopy = new String[NUM_COLOR];
         
-        //CHECK POSITION AND COLOR
+        //CHECK POSITION AND COLOR - BLACK
+        int black = 0, white = 0, i = 0, j = 0;
         for(i = 0; i < NUM_COLOR; i++)
         {
-            
-            if( input[i].equals(hidden[i]))
+            if( input[i].toString().equals(hidden[i].toString()))
             {
                 black++; //count number of matching color and position
             }
             else{ //not black then save to an other arr for check color
                 inputCopy[j] = input[i].toString();
                 hiddenCopy[j] = hidden[i].toString();
-                j++;
+                j++; 
             }
         }
-        
-        //CHECK FOR MATCHING COLOR
-        for(i = 0; i < NUM_COLOR-black; i++){
-            for(j = 0; j < NUM_COLOR-black; j++){
+        //CHECK FOR MATCHING COLOR - WHITE
+        for(i = 0; i < NUM_COLOR - black; i++){
+            for(j = 0; j < NUM_COLOR - black; j++){
                 if(inputCopy[i].equals(hiddenCopy[j])){
                     white++;//count number of matching color, exclude the one that already mark as black
+                    hiddenCopy[j] = "Long"; //why not?
+                    break;
                 }
             }
         }
+        System.out.printf("\nwhite: %d \n", white);
         //FILL RESULT
+        Result[] result = new Result[NUM_COLOR];
+        int index = 0;
         for(i = 0; i < black; i++){
-            result[i] =  Result.BLACK;
+            result[index++] =  Result.BLACK;
         }
-        for(i = black; i < white; i++){
-            result[i] = Result.WHITE;
+        for(i = 0; i < white; i++){
+            result[index++] = Result.WHITE;
         }
         
         //FILL THE REST OF RESULT WITH NONE
         if(black + white < NUM_COLOR){
-            int nextIndex = black+white;
-            for(i = nextIndex; i < NUM_COLOR; i++){
-                result[i] = Result.NONE;
+            for(i = 0; i < NUM_COLOR - (black+white); i++){
+                result[index++] = Result.NONE;
             }
         }
         //PRINT OUT FOR TESTING
         System.out.printf("RESULT: ");
         for (i = 0; i < NUM_COLOR; i++) {
             System.out.printf("%s ", result[i]);
-        }
-        
+        }        
     }
     
     
@@ -123,22 +120,25 @@ public class MasterMind
     {
         Color c1 = Color.RED; //initialize an object of Color class
         c1.DisplayAllColors(); //display all colors at the beginning of the game
-        /*
+        
          //print a list of random numbers
-         System.out.println("\ngetRandomColor():");
+         /*System.out.println("\ngetRandomColor():");
          for (int i = 0; i < 4; i++) {
-         System.out.printf("%s ", Color.getRandomColor());
+            System.out.printf("%s ", Color.getRandomColor());
          }
          System.out.println();
          
          System.out.println("\nHiddenColor():");
          Color[] hidden = Color.values();
          HiddenColors(hidden);
+         
+        Trials();
          */
-        
         //for checking purpose only :)
         Color[] hidden_test = new Color[NUM_COLOR];
         Color[] input_test = new Color[NUM_COLOR];
+        
+
         System.out.printf("HIDEN: ");
         for (int i = 0; i < NUM_COLOR; i++) {
             
@@ -154,6 +154,7 @@ public class MasterMind
         }
         System.out.printf("\n");
         CheckResult(hidden_test,input_test);
+
     }
     
 }
